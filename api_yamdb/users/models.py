@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-USERS_ROLES = ('user', 'moderator', 'admin')
+USERS_ROLES = (('user', 'user'),('moderator', 'moderator'), ('admin', 'admin'))
 
 
 class User(AbstractUser):
@@ -22,7 +22,7 @@ class User(AbstractUser):
         choices=USERS_ROLES,
         default='user'
     )
-    biography = models.TextField(
+    bio = models.TextField(
         verbose_name='Биография',
         max_length=512,
         null=True
