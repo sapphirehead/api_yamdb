@@ -9,12 +9,11 @@ from rest_framework.response import Response
 
 from api_yamdb.settings import EMAIL_AUTH
 
-from .serializers import (UserAuthSerializer, 
-                            UserMeSerializer, 
-                            UserSerializer,
+from .serializers import (UserAuthSerializer, UserMeSerializer, UserSerializer,
                           UserSignUpSerializer)
 
 User = get_user_model()
+
 
 @api_view(['POST'])
 def signup_user(request):

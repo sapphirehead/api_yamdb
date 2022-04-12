@@ -20,6 +20,6 @@ class IsUserOrAdminOrModerOrReadOnly(permissions.BasePermission):
         if request.user.is_authenticated:
             return obj.author == request.user or request.user.role in (
                 User.ADMIN,
-                User.MODER,
+                User.MODERATOR,
             )
         return request.method in permissions.SAFE_METHODS
