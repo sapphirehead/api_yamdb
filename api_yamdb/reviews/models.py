@@ -4,12 +4,12 @@ from django.db import models
 
 class User(AbstractUser):
     ADMIN = 'admin'
-    MODER = 'moderator'
+    MODERATOR = 'moderator'
     USER = 'user'
     ME = 'me'
     USER_CHOISES = [
         (USER, 'user'),
-        (MODER, 'moderator'),
+        (MODERATOR, 'moderator'),
         (ADMIN, 'admin')
     ]
     username = models.CharField('username', max_length=32, unique=True)
