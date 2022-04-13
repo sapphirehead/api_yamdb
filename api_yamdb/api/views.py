@@ -8,7 +8,6 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from api_yamdb.settings import EMAIL_AUTH
-
 from .serializers import (CategoriesSerializer, GenresSerializer,
                           TitlesSerializer, UserAuthSerializer,
                           UserMeSerializer, UserSerializer,

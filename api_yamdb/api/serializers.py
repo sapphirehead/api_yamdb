@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .validators import username_exist
+from .validators import username_exists
 from reviews.models import Categories, Genres, Titles, User
 
 
@@ -43,7 +43,7 @@ class UserSignUpSerializer(UserSerializer):
 
 
 class UserAuthSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(validators=[username_exist])
+    username = serializers.CharField(validators=[username_exists])
     token = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
