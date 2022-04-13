@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import User
 
-from .validators import username_exist
+from .validators import username_exists
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -43,7 +43,7 @@ class UserSignUpSerializer(UserSerializer):
 
 
 class UserAuthSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(validators=[username_exist])
+    username = serializers.CharField(validators=[username_exists])
     token = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -63,8 +63,7 @@ class UserAuthSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'confirmation_code': 'This field is required.'}
             )
-
-        if code != code_from_user:
+        elif code != code_from_user:
             raise serializers.ValidationError(
                 {'confirmation_code': 'Invalid value.'}
             )
