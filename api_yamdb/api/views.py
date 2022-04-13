@@ -21,11 +21,10 @@ def signup_user(request):
     serializer.is_valid(raise_exception=True)
     confirmation_code = uuid.uuid4()
     serializer.save(confirmation_code=confirmation_code)
-
     email = serializer.validated_data['email']
     send_mail(
-        'You should use the next',
-        f'confirmation_code: {confirmation_code}',
+        'YaMDB: Confirmation code for account',
+        f'You should use the next confirmation_code: {confirmation_code}',
         EMAIL_AUTH,
         [email],
         fail_silently=False,
