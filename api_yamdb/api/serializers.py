@@ -6,6 +6,7 @@ from .validators import username_exists
 from reviews.models import Categories, Genres, Titles, User
 
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -63,8 +64,7 @@ class UserAuthSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {'confirmation_code': 'This field is required.'}
             )
-
-        if code != code_from_user:
+        elif code != code_from_user:
             raise serializers.ValidationError(
                 {'confirmation_code': 'Invalid value.'}
             )
