@@ -5,6 +5,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .validators import username_exists
 from reviews.models import Categories, Genres, Titles, User
 
+CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
+CONFIRMATION_CODE_INVALID = {'confirmation_code': 'Invalid value.'}
+USERNAME_PROHIBITED = 'This username is prohibited. You should select other.'
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,31 +19,22 @@ class UserSerializer(serializers.ModelSerializer):
 class UserMeSerializer(UserSerializer):
     username = serializers.CharField(read_only=True)
     email = serializers.EmailField(read_only=True)
-
+    
     def validate(self, data):
         instance = getattr(self, 'instance', None)
         if instance.role != User.ADMIN:
             data['role'] = instance.role
         return data
 
-
 class UserSignUpSerializer(UserSerializer):
     class Meta:
         model = User
         fields = ['username', 'email']
-
-    def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError('This email already exists!')
-        return value
-
+    
     def validate_username(self, value):
         if value == User.ME:
-            raise serializers.ValidationError(
-                'An user with this username already exists.'
-            )
+            raise serializers.ValidationError(USERNAME_PROHIBITED)
         return value
-
 
 class UserAuthSerializer(serializers.ModelSerializer):
     username = serializers.CharField(validators=[username_exists])
@@ -60,14 +54,9 @@ class UserAuthSerializer(serializers.ModelSerializer):
         code = User.objects.get(username=data['username']).confirmation_code
         code_from_user = data.get('confirmation_code')
         if code_from_user == None:
-            raise serializers.ValidationError(
-                {'confirmation_code': 'This field is required.'}
-            )
-
-        if code != code_from_user:
-            raise serializers.ValidationError(
-                {'confirmation_code': 'Invalid value.'}
-            )
+            raise serializers.ValidationError(CONFIRMATION_CODE_REQUIRED)
+        elif code != code_from_user:
+            raise serializers.ValidationError(CONFIRMATION_CODE_INVALID)
         return data
 
 
