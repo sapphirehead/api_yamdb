@@ -37,7 +37,7 @@ class UserSignUpSerializer(UserSerializer):
     def validate_username(self, value):
         if value == User.ME:
             raise serializers.ValidationError(
-                'A user with this username already exists.'
+                'An user with this username already exists.'
             )
         return value
 
