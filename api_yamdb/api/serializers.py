@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-from reviews.models import User
 
 from .validators import username_exists
+from reviews.models import Categories, Genres, Titles, User
+
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -68,3 +69,21 @@ class UserAuthSerializer(serializers.ModelSerializer):
                 {'confirmation_code': 'Invalid value.'}
             )
         return data
+
+
+class TitlesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Titles
+        fields = '__all__'
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = '__all__'
+
+
+class GenresSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genres
+        fields = '__all__'

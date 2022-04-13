@@ -8,9 +8,11 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from api_yamdb.settings import EMAIL_AUTH
-
-from .serializers import (UserAuthSerializer, UserMeSerializer, UserSerializer,
+from .serializers import (CategoriesSerializer, GenresSerializer,
+                          TitlesSerializer, UserAuthSerializer,
+                          UserMeSerializer, UserSerializer,
                           UserSignUpSerializer)
+from reviews.models import Categories, Genres, Titles
 
 User = get_user_model()
 
@@ -68,3 +70,18 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TitlesViewSet(viewsets.ModelViewSet):
+    queryset = Titles.objects.all()
+    serializer_class = TitlesSerializer
+
+
+class CategoriesViewSet(viewsets.ModelViewSet):
+    queryset = Categories.objects.all()
+    serializer_class = CategoriesSerializer
+
+
+class GenresViewSet(viewsets.ModelViewSet):
+    queryset = Genres.objects.all()
+    serializer_class = GenresSerializer
