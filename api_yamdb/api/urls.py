@@ -5,6 +5,9 @@ from . import views
 
 router_ver1 = DefaultRouter()
 
+router_ver1.register('titles', views.TitlesViewSet)
+router_ver1.register('categories', views.CategoriesViewSet)
+router_ver1.register('genres', views.GenresViewSet)
 router_ver1.register(r'users', views.UserViewSet)
 
 urlpatterns = [
