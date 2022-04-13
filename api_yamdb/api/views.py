@@ -39,12 +39,11 @@ def signup_user(request):
 def get_auth_token(request):
     serializer = UserAuthSerializer(data=request.data, many=False)
     if serializer.is_valid():
-        token = serializer.data['token']
-        return Response({'token': token}, status=status.HTTP_200_OK)
-
-    username_error = serializer.errors.get('username')
-    if username_error is not None:
-        for error in username_error:
+        return Response(
+            {'token': serializer.data['token']}, status=status.HTTP_200_OK
+        )
+    elif serializer.errors.get('username') != None:
+        for error in serializer.errors.get('username'):
             if error.code == 'invalid':
                 return Response(status=status.HTTP_404_NOT_FOUND)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -57,8 +56,11 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminUser,)
     lookup_field = 'username'
 
-    @action(detail=False, methods=['get', 'patch'],
-            permission_classes=[permissions.IsAuthenticated])
+    @action(
+        detail=False, 
+        methods=['GET', 'PATCH'], 
+        permission_classes=[permissions.IsAuthenticated]
+    )
     def me(self, request):
         user = request.user
         if request.method == 'GET':

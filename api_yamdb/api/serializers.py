@@ -51,14 +51,15 @@ class UserAuthSerializer(serializers.ModelSerializer):
         fields = ['username', 'confirmation_code', 'token']
 
     def get_token(self, data):
-        user = User.objects.get(username=data['username'])
-        token = RefreshToken.for_user(user)
+        token = RefreshToken.for_user(
+            User.objects.get(username=data['username'])
+        )
         return str(token.access_token)
 
     def validate(self, data):
         code = User.objects.get(username=data['username']).confirmation_code
         code_from_user = data.get('confirmation_code')
-        if code_from_user is None:
+        if code_from_user == None:
             raise serializers.ValidationError(
                 {'confirmation_code': 'This field is required.'}
             )
