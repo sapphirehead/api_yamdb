@@ -2,19 +2,22 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from . import views
-from reviews.views import ReviewViewSet, CommentViewSet
+
 
 router_ver1 = DefaultRouter()
 
-router_ver1.register(r'users', views.UserViewSet)
+router_ver1.register(r'titles', views.TitlesViewSet)
+router_ver1.register(r'categories', views.CategoriesViewSet)
+router_ver1.register(r'genres', views.GenresViewSet)
 router_ver1.register(
     r'titles/(?P<title_id>[\d]+)/reviews',
-    ReviewViewSet,
+    views.ReviewViewSet,
 )
 router_ver1.register(
     r'titles/(?P<title_id>[\d]+)/reviews/(?P<review_id>[\d]+)/comments',
-    CommentViewSet
+    views.CommentViewSet
 )
+router_ver1.register(r'users', views.UserViewSet)
 
 urlpatterns = [
     path('v1/auth/signup/', views.signup_user, name='signup'),

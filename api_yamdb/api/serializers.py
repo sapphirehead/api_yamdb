@@ -1,9 +1,13 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-from reviews.models import Comments, Review, User
+from .validators import username_exists
+from reviews.models import (Categories, Comments, Genres,
+                            Review, Titles, User)
 
-from .validators import username_exist
+CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
+CONFIRMATION_CODE_INVALID = {'confirmation_code': 'Invalid value.'}
+USERNAME_PROHIBITED = 'This username is prohibited. You should select other.'
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -29,21 +33,14 @@ class UserSignUpSerializer(UserSerializer):
         model = User
         fields = ['username', 'email']
 
-    def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError('This email already exists!')
-        return value
-
     def validate_username(self, value):
         if value == User.ME:
-            raise serializers.ValidationError(
-                'An user with this username already exists.'
-            )
+            raise serializers.ValidationError(USERNAME_PROHIBITED)
         return value
 
 
 class UserAuthSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(validators=[username_exist])
+    username = serializers.CharField(validators=[username_exists])
     token = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -51,23 +48,37 @@ class UserAuthSerializer(serializers.ModelSerializer):
         fields = ['username', 'confirmation_code', 'token']
 
     def get_token(self, data):
-        user = User.objects.get(username=data['username'])
-        token = RefreshToken.for_user(user)
+        token = RefreshToken.for_user(
+            User.objects.get(username=data['username'])
+        )
         return str(token.access_token)
 
     def validate(self, data):
         code = User.objects.get(username=data['username']).confirmation_code
         code_from_user = data.get('confirmation_code')
-        if code_from_user is None:
-            raise serializers.ValidationError(
-                {'confirmation_code': 'This field is required.'}
-            )
-
-        if code != code_from_user:
-            raise serializers.ValidationError(
-                {'confirmation_code': 'Invalid value.'}
-            )
+        if code_from_user == None:
+            raise serializers.ValidationError(CONFIRMATION_CODE_REQUIRED)
+        elif code != code_from_user:
+            raise serializers.ValidationError(CONFIRMATION_CODE_INVALID)
         return data
+
+
+class TitlesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Titles
+        fields = '__all__'
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = '__all__'
+
+
+class GenresSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genres
+        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):

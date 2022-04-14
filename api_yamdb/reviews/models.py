@@ -44,8 +44,6 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if self.is_superuser:
             self.role = self.ADMIN
-
-        if self.role == self.ADMIN:
             self.is_staff = True
         else:
             self.is_staff = False
@@ -71,7 +69,7 @@ class Genres(models.Model):
 
 class Titles(models.Model):
     name = models.TextField()
-    year = models.TextField()
+    year = models.IntegerField()
     description = models.TextField()
     genre = models.ForeignKey(
         Genres,
