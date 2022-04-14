@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -43,7 +44,6 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if self.is_superuser:
             self.role = self.ADMIN
-        elif self.role == self.ADMIN:
             self.is_staff = True
         else:
             self.is_staff = False
@@ -69,7 +69,7 @@ class Genres(models.Model):
 
 class Titles(models.Model):
     name = models.TextField()
-    year = models.TextField()
+    year = models.IntegerField()
     description = models.TextField()
     genre = models.ForeignKey(
         Genres,
@@ -88,3 +88,54 @@ class Titles(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Review(models.Model):
+    title = models.ForeignKey(
+        Titles,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    text = models.TextField('Текст отзыва')
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    score = models.IntegerField(
+        'Оценка [ 1 .. 10 ] ',
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10)
+        ]
+    )
+    pub_date = models.DateTimeField(
+        'Дата публикации отзыва',
+        auto_now_add=True,
+        db_index=True
+    )
+
+    def __str__(self):
+        return self.text
+
+
+class Comments(models.Model):
+    text = models.TextField('Текст комментария')
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+    pub_date = models.DateTimeField(
+        'Дата публикации комментария',
+        auto_now_add=True,
+        db_index=True
+    )
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+
+    def __str__(self):
+        return self.text

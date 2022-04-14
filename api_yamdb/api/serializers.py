@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from .validators import username_exists
-from reviews.models import Categories, Genres, Titles, User
+from reviews.models import (Categories, Comments, Genres,
+                            Review, Titles, User)
 
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
 CONFIRMATION_CODE_INVALID = {'confirmation_code': 'Invalid value.'}
@@ -20,22 +20,24 @@ class UserSerializer(serializers.ModelSerializer):
 class UserMeSerializer(UserSerializer):
     username = serializers.CharField(read_only=True)
     email = serializers.EmailField(read_only=True)
-    
+
     def validate(self, data):
         instance = getattr(self, 'instance', None)
         if instance.role != User.ADMIN:
             data['role'] = instance.role
         return data
 
+
 class UserSignUpSerializer(UserSerializer):
     class Meta:
         model = User
         fields = ['username', 'email']
-    
+
     def validate_username(self, value):
         if value == User.ME:
             raise serializers.ValidationError(USERNAME_PROHIBITED)
         return value
+
 
 class UserAuthSerializer(serializers.ModelSerializer):
     username = serializers.CharField(validators=[username_exists])
@@ -76,4 +78,28 @@ class CategoriesSerializer(serializers.ModelSerializer):
 class GenresSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genres
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+    )
+    review = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Comments
+        fields = '__all__'
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+    )
+    title = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Review
         fields = '__all__'
