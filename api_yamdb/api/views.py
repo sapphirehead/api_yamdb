@@ -1,6 +1,5 @@
 import uuid
 
-from api_yamdb.settings import EMAIL_AUTH
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
@@ -8,13 +7,13 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
-from reviews.models import Categories, Genres, Review, Titles
 
+from api_yamdb.settings import EMAIL_AUTH
+from reviews.models import Categories, Genres, Review, Titles
 from .permissions import IsUserOrAdminOrModerOrReadOnly
 from .serializers import (CategoriesSerializer, CommentSerializer,
-                          GenresSerializer, ReviewSerializer,
-                          TitlesSerializer, UserAuthSerializer,
-                          UserMeSerializer, UserSerializer,
+                          GenresSerializer, ReviewSerializer, TitlesSerializer,
+                          UserAuthSerializer, UserMeSerializer, UserSerializer,
                           UserSignUpSerializer)
 
 User = get_user_model()
