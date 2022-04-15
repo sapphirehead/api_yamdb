@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework import permissions, status, viewsets
+from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -59,7 +59,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False, 
-        methods=['GET', 'PATCH'], 
+        methods=['GET', 'PATCH'],
         permission_classes=[permissions.IsAuthenticated]
     )
     def me(self, request):
@@ -82,6 +82,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
 class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class GenresViewSet(viewsets.ModelViewSet):
