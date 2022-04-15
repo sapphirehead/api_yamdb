@@ -116,7 +116,7 @@ class Review(models.Model):
     )
 
     def __str__(self):
-        return self.text
+        return self.text[:20]
 
 
 class Comments(models.Model):
@@ -138,4 +138,4 @@ class Comments(models.Model):
     )
 
     def __str__(self):
-        return self.text
+        return self.text[:20]
