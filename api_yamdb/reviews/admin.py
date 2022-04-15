@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import Categories, Genres, Titles
 
-# Register your models here.
+
+admin.site.register(Titles)
+admin.site.register(Genres)
+admin.site.register(Categories)

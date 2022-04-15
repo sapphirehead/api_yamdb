@@ -77,7 +77,7 @@ class TitlesSerializer(serializers.ModelSerializer):
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class GenresSerializer(serializers.ModelSerializer):
