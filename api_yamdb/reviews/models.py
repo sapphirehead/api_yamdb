@@ -12,6 +12,7 @@ USER_CHOISES = [
     (ADMIN, 'admin')
     ]
 
+
 class User(AbstractUser):
     username = models.CharField('username', max_length=32, unique=True)
     email = models.EmailField('email', max_length=64, unique=True)
