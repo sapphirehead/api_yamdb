@@ -1,13 +1,18 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from reviews.models import (
+    ADMIN, ME, Categories, Comments, Genres, Review, Titles, User
+)
 from .validators import username_exists
-from reviews.models import (Categories, Comments, Genres,
-                            Review, Titles, User)
 
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
 CONFIRMATION_CODE_INVALID = {'confirmation_code': 'Invalid value.'}
-USERNAME_PROHIBITED = 'This username is prohibited. You should select other.'
+USERNAME_PROHIBITED = (
+    'The username "me" is prohibited.',
+    'You should select another.'
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -23,7 +28,7 @@ class UserMeSerializer(UserSerializer):
 
     def validate(self, data):
         instance = getattr(self, 'instance', None)
-        if instance.role != User.ADMIN:
+        if instance.role != ADMIN:
             data['role'] = instance.role
         return data
 
@@ -34,7 +39,7 @@ class UserSignUpSerializer(UserSerializer):
         fields = ['username', 'email']
 
     def validate_username(self, value):
-        if value == User.ME:
+        if value == ME:
             raise serializers.ValidationError(USERNAME_PROHIBITED)
         return value
 

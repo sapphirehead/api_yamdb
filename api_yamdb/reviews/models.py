@@ -2,17 +2,17 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+ADMIN = 'admin'
+MODERATOR = 'moderator'
+USER = 'user'
+ME = 'me'
+USER_CHOISES = [
+    (USER, 'user'),
+    (MODERATOR, 'moderator'),
+    (ADMIN, 'admin')
+    ]
 
 class User(AbstractUser):
-    ADMIN = 'admin'
-    MODERATOR = 'moderator'
-    USER = 'user'
-    ME = 'me'
-    USER_CHOISES = [
-        (USER, 'user'),
-        (MODERATOR, 'moderator'),
-        (ADMIN, 'admin')
-    ]
     username = models.CharField('username', max_length=32, unique=True)
     email = models.EmailField('email', max_length=64, unique=True)
     first_name = models.CharField(
@@ -43,7 +43,8 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         if self.is_superuser:
-            self.role = self.ADMIN
+            self.role = ADMIN
+        elif self.role == ADMIN:
             self.is_staff = True
         else:
             self.is_staff = False
