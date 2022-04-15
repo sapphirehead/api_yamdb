@@ -75,14 +75,14 @@ class Titles(models.Model):
     description = models.TextField()
     genre = models.ForeignKey(
         Genres,
-        on_delete=models.CASCADE,
-        related_name="titles",
+        on_delete=models.SET_NULL,
+        related_name='titles',
         blank=True,
         null=True
     )
     category = models.ForeignKey(
         Categories,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="titles",
         blank=True,
         null=True

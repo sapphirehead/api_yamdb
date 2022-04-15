@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 from api_yamdb.settings import EMAIL_AUTH
 from reviews.models import Categories, Genres, Review, Titles
-from .permissions import IsUserOrAdminOrModerOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsUserOrAdminOrModerOrReadOnly
 from .serializers import (CategoriesSerializer, CommentSerializer,
                           GenresSerializer, ReviewSerializer, TitlesSerializer,
                           UserAuthSerializer, UserMeSerializer, UserSerializer,
@@ -58,7 +58,7 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
 
     @action(
-        detail=False, 
+        detail=False,
         methods=['GET', 'PATCH'],
         permission_classes=[permissions.IsAuthenticated]
     )
@@ -84,6 +84,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriesSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class GenresViewSet(viewsets.ModelViewSet):
