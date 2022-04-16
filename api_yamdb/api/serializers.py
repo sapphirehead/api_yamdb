@@ -68,12 +68,6 @@ class UserAuthSerializer(serializers.ModelSerializer):
         return data
 
 
-class TitlesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Titles
-        fields = '__all__'
-
-
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
@@ -86,15 +80,29 @@ class GenresSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='username',
-    )
-    review = serializers.PrimaryKeyRelatedField(read_only=True)
+class TitlesSerializer(serializers.ModelSerializer):
+    genre = GenresSerializer(read_only=True, many=True)
+    category = CategoriesSerializer(read_only=True)
+    rating = serializers.IntegerField()
 
     class Meta:
-        model = Comments
+        model = Titles
+        fields = '__all__'
+
+
+class TitleWriteSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Genres.objects.all(),
+        many=True
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Categories.objects.all()
+    )
+
+    class Meta:
+        model = Titles
         fields = '__all__'
 
 
@@ -107,4 +115,16 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+    )
+    review = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Comments
         fields = '__all__'
