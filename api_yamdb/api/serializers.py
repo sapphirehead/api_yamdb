@@ -10,7 +10,7 @@ from .validators import username_exists
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
 CONFIRMATION_CODE_INVALID = {'confirmation_code': 'Invalid value.'}
 USERNAME_PROHIBITED = (
-    'The username "me" is prohibited.',
+    'The {username} is prohibited.',
     'You should select another.'
 )
 
@@ -27,7 +27,7 @@ class UserMeSerializer(UserSerializer):
     email = serializers.EmailField(read_only=True)
 
     def validate(self, data):
-        instance = getattr(self, 'instance', None)
+        instance = getattr(self, 'instance')
         if instance.role != ADMIN:
             data['role'] = instance.role
         return data
@@ -66,7 +66,8 @@ class UserAuthSerializer(serializers.ModelSerializer):
         elif code != code_from_user:
             raise serializers.ValidationError(CONFIRMATION_CODE_INVALID)
         return data
-
+    
+    
 
 class TitlesSerializer(serializers.ModelSerializer):
     class Meta:
