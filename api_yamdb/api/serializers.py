@@ -1,10 +1,9 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from reviews.models import (
     ADMIN, ME, Categories, Comments, Genres, Review, Titles, User
 )
+
 from .validators import username_exists
 
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
@@ -67,7 +66,6 @@ class UserAuthSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(CONFIRMATION_CODE_INVALID)
         return data
     
-    
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,7 +76,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
 class GenresSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genres
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class TitlesSerializer(serializers.ModelSerializer):

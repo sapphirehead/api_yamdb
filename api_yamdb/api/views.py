@@ -3,16 +3,17 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.db.models import Avg
-from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status, viewsets
+from rest_framework import mixins
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
-
 from api_yamdb.settings import EMAIL_AUTH
 from reviews.models import Categories, Genres, Review, Titles
+
 from .filters import TitleFilter
 from .permissions import (IsAdminOrReadOnly,
                           IsUserOrAdminOrModerOrReadOnly)
@@ -101,7 +102,17 @@ class TitlesViewSet(viewsets.ModelViewSet):
         return TitleWriteSerializer
 
 
-class CategoriesViewSet(viewsets.ModelViewSet):
+class ListCreateRetrieveViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
+                                mixins.RetrieveModelMixin,
+                                viewsets.GenericViewSet):
+    pass
+
+
+class DestroyViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class CategoriesListCreateViewSet(ListCreateRetrieveViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
     filter_backends = (filters.SearchFilter,)
@@ -109,9 +120,18 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
 
 
+class CategoriesDestroyViewSet(DestroyViewSet):
+    queryset = Categories.objects.all()
+    serializer_class = CategoriesSerializer
+    lookup_field = 'slug'
+
+
 class GenresViewSet(viewsets.ModelViewSet):
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
