@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, permissions, status, viewsets
+from rest_framework import filters, generics, mixins, permissions, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -79,12 +79,28 @@ class TitlesViewSet(viewsets.ModelViewSet):
     serializer_class = TitlesSerializer
 
 
-class CategoriesViewSet(viewsets.ModelViewSet):
+class ListCreateRetrieveViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
+                                mixins.RetrieveModelMixin,
+                                viewsets.GenericViewSet):
+    pass
+
+
+class DestroyViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class CategoriesListCreateViewSet(ListCreateRetrieveViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     permission_classes = [IsAdminOrReadOnly]
+
+
+class CategoriesDestroyViewSet(DestroyViewSet):
+    queryset = Categories.objects.all()
+    serializer_class = CategoriesSerializer
+    lookup_field = 'slug'
 
 
 class GenresViewSet(viewsets.ModelViewSet):
