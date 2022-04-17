@@ -3,8 +3,10 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework import filters, generics, mixins, permissions, status, viewsets
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action, api_view
+from rest_framework import filters, permissions, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
@@ -20,6 +22,7 @@ User = get_user_model()
 
 
 @api_view(['POST'])
+@permission_classes([permissions.AllowAny])
 def signup_user(request):
     serializer = UserSignUpSerializer(data=request.data, many=False)
     serializer.is_valid(raise_exception=True)
@@ -37,6 +40,7 @@ def signup_user(request):
 
 
 @api_view(['POST'])
+@permission_classes([permissions.AllowAny])
 def get_auth_token(request):
     serializer = UserAuthSerializer(data=request.data, many=False)
     if serializer.is_valid():
@@ -46,10 +50,14 @@ def get_auth_token(request):
     elif serializer.errors.get('username') != None:
         for error in serializer.errors.get('username'):
             if error.code == 'invalid':
-                return Response(status=status.HTTP_404_NOT_FOUND)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+                return Response(
+                    status=status.HTTP_404_NOT_FOUND
+                )
+    return Response(
+        serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+    
+     
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
