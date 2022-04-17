@@ -67,13 +67,6 @@ class UserAuthSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(CONFIRMATION_CODE_INVALID)
         return data
     
-    
-
-class TitlesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Titles
-        fields = '__all__'
-
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -85,6 +78,14 @@ class GenresSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genres
         fields = ('name', 'slug')
+
+
+class TitlesSerializer(serializers.ModelSerializer):
+    genre = GenresSerializer(read_only=True, many=True)
+    category = CategoriesSerializer(read_only=True)
+    class Meta:
+        model = Titles
+        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):
