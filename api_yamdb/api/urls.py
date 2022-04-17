@@ -13,10 +13,6 @@ router_ver1.register(
     views.CategoriesListCreateViewSet,
 )
 router_ver1.register(
-    r'categories',
-    views.CategoriesDestroyViewSet,
-)
-router_ver1.register(
     r'genres', views.GenresViewSet
 )
 router_ver1.register(

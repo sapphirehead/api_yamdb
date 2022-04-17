@@ -116,6 +116,7 @@ class GenresViewSet(viewsets.ModelViewSet):
     serializer_class = GenresSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
