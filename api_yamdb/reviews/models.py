@@ -53,7 +53,7 @@ class User(AbstractUser):
         super(User, self).save(*args, **kwargs)
 
 
-class Categories(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(unique=True)
 
@@ -61,7 +61,7 @@ class Categories(models.Model):
         return self.name
 
 
-class Genres(models.Model):
+class Genre(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(unique=True)
 
@@ -74,11 +74,11 @@ class Title(models.Model):
     year = models.IntegerField()
     description = models.TextField()
     genre = models.ManyToManyField(
-        Genres,
+        Genre,
         related_name='titles'
     )
     category = models.ForeignKey(
-        Categories,
+        Category,
         on_delete=models.SET_NULL,
         related_name="titles",
         blank=True,
@@ -126,7 +126,7 @@ class Review(models.Model):
         return self.text[:20]
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     text = models.TextField('Текст комментария')
     author = models.ForeignKey(
         User,

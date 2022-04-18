@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import (
-    ADMIN, ME, Categories, Comments, Genres, Review, Title, User
+    ADMIN, ME, Category, Comment, Genre, Review, Title, User
 )
 
 from .validators import username_exists
@@ -67,21 +67,21 @@ class UserAuthSerializer(serializers.ModelSerializer):
         return data
     
 
-class CategoriesSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Categories
+        model = Category
         fields = ('name', 'slug')
 
 
-class GenresSerializer(serializers.ModelSerializer):
+class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Genres
+        model = Genre
         fields = ('name', 'slug')
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    genre = GenresSerializer(read_only=True, many=True)
-    category = CategoriesSerializer(read_only=True)
+    genre = GenreSerializer(read_only=True, many=True)
+    category = CategorySerializer(read_only=True)
     rating = serializers.IntegerField()
 
     class Meta:
@@ -92,12 +92,12 @@ class TitleSerializer(serializers.ModelSerializer):
 class TitleWriteSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         slug_field='slug',
-        queryset=Genres.objects.all(),
+        queryset=Genre.objects.all(),
         many=True
     )
     category = serializers.SlugRelatedField(
         slug_field='slug',
-        queryset=Categories.objects.all()
+        queryset=Category.objects.all()
     )
 
     class Meta:
@@ -138,5 +138,5 @@ class CommentSerializer(serializers.ModelSerializer):
     review = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
-        model = Comments
+        model = Comment
         fields = '__all__'

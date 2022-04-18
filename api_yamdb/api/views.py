@@ -12,13 +12,13 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from api_yamdb.settings import EMAIL_AUTH
-from reviews.models import Categories, Genres, Review, Title
+from reviews.models import Category, Genre, Review, Title
 
 from .filters import TitleFilter
 from .permissions import (IsAdminOrReadOnly,
                           IsUserOrAdminOrModerOrReadOnly)
-from .serializers import (CategoriesSerializer, CommentSerializer,
-                          GenresSerializer, ReviewSerializer,
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReviewSerializer,
                           TitleSerializer, TitleWriteSerializer,
                           UserAuthSerializer, UserMeSerializer,
                           UserSerializer, UserSignUpSerializer)
@@ -112,23 +112,23 @@ class DestroyViewSet(mixins.DestroyModelMixin, viewsets.GenericViewSet):
     pass
 
 
-class CategoriesListCreateViewSet(ListCreateRetrieveViewSet):
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
+class CategoryListCreateViewSet(ListCreateRetrieveViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     permission_classes = [IsAdminOrReadOnly]
 
 
-class CategoriesDestroyViewSet(DestroyViewSet):
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
+class CategoryDestroyViewSet(DestroyViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
     lookup_field = 'slug'
 
 
-class GenresViewSet(viewsets.ModelViewSet):
-    queryset = Genres.objects.all()
-    serializer_class = GenresSerializer
+class GenreViewSet(viewsets.ModelViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     permission_classes = [IsAdminOrReadOnly]

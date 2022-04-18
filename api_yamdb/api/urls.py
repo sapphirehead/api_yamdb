@@ -10,10 +10,10 @@ router_ver1.register(
 )
 router_ver1.register(
     'categories',
-    views.CategoriesListCreateViewSet,
+    views.CategoryListCreateViewSet,
 )
 router_ver1.register(
-    'genres', views.GenresViewSet
+    'genres', views.GenreViewSet
 )
 router_ver1.register(
     r'titles/(?P<title_id>[\d]+)/reviews',
