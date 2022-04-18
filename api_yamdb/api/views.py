@@ -93,8 +93,9 @@ class TitleViewSet(viewsets.ModelViewSet):
     )
     serializer_class = TitleSerializer
     permission_classes = [IsAdminOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = TitleFilter
+    ordering = ('-id')
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
