@@ -19,7 +19,7 @@ from .permissions import (IsAdminOrReadOnly,
                           IsUserOrAdminOrModerOrReadOnly)
 from .serializers import (CategoriesSerializer, CommentSerializer,
                           GenresSerializer, ReviewSerializer,
-                          TitlesSerializer, TitleWriteSerializer,
+                          TitleSerializer, TitleWriteSerializer,
                           UserAuthSerializer, UserMeSerializer,
                           UserSerializer, UserSignUpSerializer)
 
@@ -91,14 +91,14 @@ class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Titles.objects.all().annotate(
         rating=Avg('reviews__score')
     )
-    serializer_class = TitlesSerializer
+    serializer_class = TitleSerializer
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
-            return TitlesSerializer
+            return TitleSerializer
         return TitleWriteSerializer
 
 
