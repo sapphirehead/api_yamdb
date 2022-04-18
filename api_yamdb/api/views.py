@@ -1,8 +1,8 @@
 import uuid
 
+from django.db.models import Avg
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
-from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status, viewsets
@@ -10,9 +10,9 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
+
 from api_yamdb.settings import EMAIL_AUTH
 from reviews.models import Category, Genre, Review, Title
-
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import (IsAdminOrReadOnly,
@@ -35,7 +35,7 @@ def signup_user(request):
     serializer.save(confirmation_code=confirmation_code)
     email = serializer.validated_data['email']
     send_mail(
-        'YaMDB: Confirmation code for account',
+        'YaMDB: Confirmation code for your account',
         f'You should use the next confirmation_code: {confirmation_code}',
         EMAIL_AUTH,
         [email],

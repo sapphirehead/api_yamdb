@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
+
 from reviews.models import (
     ADMIN, ME, Category, Comment, Genre, Review, Title, User
 )
-
 from .validators import username_exists
 
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
