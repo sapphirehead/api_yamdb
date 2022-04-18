@@ -23,6 +23,8 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           UserAuthSerializer, UserMeSerializer,
                           UserSerializer, UserSignUpSerializer)
 
+SUBJECT = 'YaMDB: Confirmation code for your account'
+
 User = get_user_model()
 
 
@@ -34,9 +36,10 @@ def signup_user(request):
     confirmation_code = uuid.uuid4()
     serializer.save(confirmation_code=confirmation_code)
     email = serializer.validated_data['email']
+    username = serializer.validated_data['username']
     send_mail(
-        'YaMDB: Confirmation code for your account',
-        f'You should use the next confirmation_code: {confirmation_code}',
+        SUBJECT,
+        f'Dear {username} should use the next confirmation_code: {confirmation_code}',
         EMAIL_AUTH,
         [email],
         fail_silently=False,
