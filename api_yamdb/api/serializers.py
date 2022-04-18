@@ -60,12 +60,12 @@ class UserAuthSerializer(serializers.ModelSerializer):
     def validate(self, data):
         code = User.objects.get(username=data['username']).confirmation_code
         code_from_user = data.get('confirmation_code')
-        if code_from_user == None:
+        if code_from_user is None:
             raise serializers.ValidationError(CONFIRMATION_CODE_REQUIRED)
         elif code != code_from_user:
             raise serializers.ValidationError(CONFIRMATION_CODE_INVALID)
         return data
-    
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

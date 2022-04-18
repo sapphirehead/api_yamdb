@@ -10,7 +10,7 @@ USER_CHOISES = [
     (USER, 'user'),
     (MODERATOR, 'moderator'),
     (ADMIN, 'admin')
-    ]
+]
 
 
 class User(AbstractUser):
@@ -90,7 +90,6 @@ class Title(models.Model):
         blank=True,
         null=True
     )
-
 
     def __str__(self):
         return self.name

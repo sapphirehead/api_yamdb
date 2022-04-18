@@ -52,7 +52,7 @@ def get_auth_token(request):
         return Response(
             {'token': serializer.data['token']}, status=status.HTTP_200_OK
         )
-    elif serializer.errors.get('username') != None:
+    elif serializer.errors.get('username') is not None:
         for error in serializer.errors.get('username'):
             if error.code == 'invalid':
                 return Response(
@@ -60,9 +60,9 @@ def get_auth_token(request):
                 )
     return Response(
         serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
-    
-     
+    )
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
