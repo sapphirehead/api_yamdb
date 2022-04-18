@@ -7,7 +7,7 @@ from reviews.models import (
 from .validators import username_exists
 
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
-CONFIRMATION_CODE_INVALID = {'confirmation_code': 'Invalid value.'}
+CONFIRMATION_CODE_INVALID = {'confirmation_code': 'This is an invalid value.'}
 USERNAME_PROHIBITED = (
     'The {username} is prohibited.',
     'You should select another.'
