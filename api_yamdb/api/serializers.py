@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import (
-    ADMIN, ME, Categories, Comments, Genres, Review, Titles, User
+    ADMIN, ME, Categories, Comments, Genres, Review, Title, User
 )
 
 from .validators import username_exists
@@ -85,7 +85,7 @@ class TitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField()
 
     class Meta:
-        model = Titles
+        model = Title
         fields = '__all__'
 
 
@@ -101,7 +101,7 @@ class TitleWriteSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Titles
+        model = Title
         fields = '__all__'
 
 
@@ -111,6 +111,19 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
     )
     title = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    def validate(self, review):
+        if self.context['request'].method != 'POST':
+            return review
+
+        title_id = self.context['view'].kwargs.get('title_id')
+        author = self.context['request'].user
+        if Review.objects.filter(
+                author=author, title=title_id).exists():
+            raise serializers.ValidationError(
+                'Вы уже написали отзыв к этому произведению.'
+            )
+        return review
 
     class Meta:
         model = Review

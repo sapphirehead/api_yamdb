@@ -12,7 +12,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from api_yamdb.settings import EMAIL_AUTH
-from reviews.models import Categories, Genres, Review, Titles
+from reviews.models import Categories, Genres, Review, Title
 
 from .filters import TitleFilter
 from .permissions import (IsAdminOrReadOnly,
@@ -87,8 +87,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class TitlesViewSet(viewsets.ModelViewSet):
-    queryset = Titles.objects.all().annotate(
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all().annotate(
         rating=Avg('reviews__score')
     )
     serializer_class = TitleSerializer
@@ -141,12 +141,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
-        title = get_object_or_404(Titles, id=title_id)
+        title = get_object_or_404(Title, id=title_id)
         return title.reviews.all()
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
-        title = get_object_or_404(Titles, id=title_id)
+        title = get_object_or_404(Title, id=title_id)
         serializer.save(title=title, author=self.request.user)
 
 

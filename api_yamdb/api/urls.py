@@ -6,7 +6,7 @@ from . import views
 router_ver1 = DefaultRouter()
 
 router_ver1.register(
-    'titles', views.TitlesViewSet
+    'titles', views.TitleViewSet
 )
 router_ver1.register(
     'categories',
