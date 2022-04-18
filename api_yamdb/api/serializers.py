@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from reviews.models import (
-    ADMIN, ME, Categories, Comments, Genres, Review, Titles, User
+    ADMIN, ME, Category, Comment, Genre, Review, Title, User
 )
+
 from .validators import username_exists
 
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
@@ -67,24 +67,66 @@ class UserAuthSerializer(serializers.ModelSerializer):
         return data
     
 
-class CategoriesSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Categories
+        model = Category
         fields = ('name', 'slug')
 
 
-class GenresSerializer(serializers.ModelSerializer):
+class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Genres
+        model = Genre
         fields = ('name', 'slug')
 
 
-class TitlesSerializer(serializers.ModelSerializer):
-    genre = GenresSerializer(read_only=True, many=True)
-    category = CategoriesSerializer(read_only=True)
-    
+class TitleSerializer(serializers.ModelSerializer):
+    genre = GenreSerializer(read_only=True, many=True)
+    category = CategorySerializer(read_only=True)
+    rating = serializers.IntegerField()
+
     class Meta:
-        model = Titles
+        model = Title
+        fields = '__all__'
+
+
+class TitleWriteSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Genre.objects.all(),
+        many=True
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Category.objects.all()
+    )
+
+    class Meta:
+        model = Title
+        fields = '__all__'
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+    )
+    title = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    def validate(self, review):
+        if self.context['request'].method != 'POST':
+            return review
+
+        title_id = self.context['view'].kwargs.get('title_id')
+        author = self.context['request'].user
+        if Review.objects.filter(
+                author=author, title=title_id).exists():
+            raise serializers.ValidationError(
+                'Вы уже написали отзыв к этому произведению.'
+            )
+        return review
+
+    class Meta:
+        model = Review
         fields = '__all__'
 
 
@@ -96,17 +138,5 @@ class CommentSerializer(serializers.ModelSerializer):
     review = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
-        model = Comments
-        fields = '__all__'
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='username',
-    )
-    title = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = Review
+        model = Comment
         fields = '__all__'

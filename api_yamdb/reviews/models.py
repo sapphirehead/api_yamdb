@@ -12,6 +12,7 @@ USER_CHOISES = [
     (ADMIN, 'admin')
     ]
 
+
 class User(AbstractUser):
     username = models.CharField('username', max_length=32, unique=True)
     email = models.EmailField('email', max_length=64, unique=True)
@@ -52,7 +53,7 @@ class User(AbstractUser):
         super(User, self).save(*args, **kwargs)
 
 
-class Categories(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(unique=True)
 
@@ -60,7 +61,7 @@ class Categories(models.Model):
         return self.name
 
 
-class Genres(models.Model):
+class Genre(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(unique=True)
 
@@ -68,19 +69,16 @@ class Genres(models.Model):
         return self.name
 
 
-class Titles(models.Model):
+class Title(models.Model):
     name = models.TextField()
     year = models.IntegerField()
     description = models.TextField()
-    genre = models.ForeignKey(
-        Genres,
-        on_delete=models.SET_NULL,
-        related_name='titles',
-        blank=True,
-        null=True
+    genre = models.ManyToManyField(
+        Genre,
+        related_name='titles'
     )
     category = models.ForeignKey(
-        Categories,
+        Category,
         on_delete=models.SET_NULL,
         related_name="titles",
         blank=True,
@@ -93,7 +91,7 @@ class Titles(models.Model):
 
 class Review(models.Model):
     title = models.ForeignKey(
-        Titles,
+        Title,
         on_delete=models.CASCADE,
         related_name='reviews'
     )
@@ -116,11 +114,19 @@ class Review(models.Model):
         db_index=True
     )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'],
+                name='unique_review'
+            )
+        ]
+
     def __str__(self):
-        return self.text
+        return self.text[:20]
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     text = models.TextField('Текст комментария')
     author = models.ForeignKey(
         User,
@@ -139,4 +145,4 @@ class Comments(models.Model):
     )
 
     def __str__(self):
-        return self.text
+        return self.text[:20]

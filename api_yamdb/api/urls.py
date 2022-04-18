@@ -6,14 +6,14 @@ from . import views
 router_ver1 = DefaultRouter()
 
 router_ver1.register(
-    r'titles', views.TitlesViewSet
+    'titles', views.TitleViewSet
 )
 router_ver1.register(
-    r'categories',
-    views.CategoriesListCreateViewSet,
+    'categories',
+    views.CategoryListCreateViewSet,
 )
 router_ver1.register(
-    r'genres', views.GenresViewSet
+    'genres', views.GenreViewSet
 )
 router_ver1.register(
     r'titles/(?P<title_id>[\d]+)/reviews',
