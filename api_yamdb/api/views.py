@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework import mixins
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from api_yamdb.settings import EMAIL_AUTH
@@ -95,6 +95,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_class = TitleFilter
+    pagination_class = PageNumberPagination
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
