@@ -39,7 +39,7 @@ def signup_user(request):
     username = serializer.validated_data['username']
     send_mail(
         SUBJECT,
-        f'Dear {username} should use the next confirmation_code: {confirmation_code}',
+        f'{username}, use the next confirmation_code: {confirmation_code}',
         EMAIL_AUTH,
         [email],
         fail_silently=False,
