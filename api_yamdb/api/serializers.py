@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
+
 from reviews.models import (
     ADMIN, ME, Category, Comment, Genre, Review, Title, User
 )
-
 from .validators import username_exists
 
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
@@ -60,12 +60,12 @@ class UserAuthSerializer(serializers.ModelSerializer):
     def validate(self, data):
         code = User.objects.get(username=data['username']).confirmation_code
         code_from_user = data.get('confirmation_code')
-        if code_from_user == None:
+        if code_from_user is None:
             raise serializers.ValidationError(CONFIRMATION_CODE_REQUIRED)
         elif code != code_from_user:
             raise serializers.ValidationError(CONFIRMATION_CODE_INVALID)
         return data
-    
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

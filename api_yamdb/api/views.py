@@ -1,8 +1,8 @@
 import uuid
 
+from django.db.models import Avg
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
-from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status, viewsets
@@ -10,9 +10,9 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
+
 from api_yamdb.settings import EMAIL_AUTH
 from reviews.models import Category, Genre, Review, Title
-
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import (IsAdminOrReadOnly,
@@ -22,6 +22,8 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           TitleSerializer, TitleWriteSerializer,
                           UserAuthSerializer, UserMeSerializer,
                           UserSerializer, UserSignUpSerializer)
+
+SUBJECT = 'YaMDB: Confirmation code for your account'
 
 User = get_user_model()
 
@@ -34,9 +36,10 @@ def signup_user(request):
     confirmation_code = uuid.uuid4()
     serializer.save(confirmation_code=confirmation_code)
     email = serializer.validated_data['email']
+    username = serializer.validated_data['username']
     send_mail(
-        'YaMDB: Confirmation code for account',
-        f'You should use the next confirmation_code: {confirmation_code}',
+        SUBJECT,
+        f'Dear {username} should use the next confirmation_code: {confirmation_code}',
         EMAIL_AUTH,
         [email],
         fail_silently=False,
@@ -52,7 +55,7 @@ def get_auth_token(request):
         return Response(
             {'token': serializer.data['token']}, status=status.HTTP_200_OK
         )
-    elif serializer.errors.get('username') != None:
+    elif serializer.errors.get('username') is not None:
         for error in serializer.errors.get('username'):
             if error.code == 'invalid':
                 return Response(
@@ -60,9 +63,9 @@ def get_auth_token(request):
                 )
     return Response(
         serializer.errors, status=status.HTTP_400_BAD_REQUEST
-        )
-    
-     
+    )
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
