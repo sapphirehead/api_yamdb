@@ -98,7 +98,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = TitleFilter
-    ordering = ('-id')
+    ordering = '-id'
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
@@ -109,14 +109,14 @@ class TitleViewSet(viewsets.ModelViewSet):
 class CategoryListCreateViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = [filters.SearchFilter]
     permission_classes = [IsAdminOrReadOnly]
 
 
 class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = [filters.SearchFilter]
     permission_classes = [IsAdminOrReadOnly]
 
 
