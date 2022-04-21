@@ -1,9 +1,10 @@
+import datetime as dt
+
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
+from reviews.models import (ADMIN, ME, Category, Comment, Genre, Review, Title,
+                            User)
 
-from reviews.models import (
-    ADMIN, ME, Category, Comment, Genre, Review, Title, User
-)
 from .validators import username_exists
 
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
@@ -70,13 +71,13 @@ class UserAuthSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('name', 'slug')
+        exclude = ('id',)
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = ('name', 'slug')
+        exclude = ('id',)
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -99,6 +100,12 @@ class TitleWriteSerializer(serializers.ModelSerializer):
         slug_field='slug',
         queryset=Category.objects.all()
     )
+
+    def validate_year(self, value):
+        year = dt.date.today().year
+        if not (value <= year):
+            raise serializers.ValidationError('Incorrectly year.')
+        return value
 
     class Meta:
         model = Title
