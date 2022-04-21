@@ -128,3 +128,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_AUTH = ('noreply@yadmb.ru',)
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+
+VALIDATOR_MESSAGE = 'Введите число от 1 до 10'

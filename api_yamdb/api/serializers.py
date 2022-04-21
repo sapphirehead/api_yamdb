@@ -6,6 +6,7 @@ from reviews.models import (
     ADMIN, ME, Category, Comment, Genre, Review, Title, User
 )
 
+
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
 CONFIRMATION_CODE_INVALID = {'confirmation_code': 'This is an invalid value.'}
 USERNAME_PROHIBITED = (
@@ -66,13 +67,13 @@ class UserAuthSerializer(serializers.Serializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('name', 'slug')
+        exclude = ('id',)
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = ('name', 'slug')
+        exclude = ('id',)
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -95,6 +96,12 @@ class TitleWriteSerializer(serializers.ModelSerializer):
         slug_field='slug',
         queryset=Category.objects.all()
     )
+
+    def validate_year(self, value):
+        year = dt.date.today().year
+        if not (value <= year):
+            raise serializers.ValidationError('Incorrectly year.')
+        return value
 
     class Meta:
         model = Title
@@ -120,6 +127,13 @@ class ReviewSerializer(serializers.ModelSerializer):
                 'You have already written a review for this work.'
             )
         return review
+
+    def validate_score(self, score):
+        if not 1 <= score <= 10:
+            raise serializers.ValidationError(
+                'The score must be from 1 to 10'
+            )
+        return score
 
     class Meta:
         model = Review
