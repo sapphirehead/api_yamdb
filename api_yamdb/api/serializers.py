@@ -125,6 +125,13 @@ class ReviewSerializer(serializers.ModelSerializer):
             )
         return review
 
+    def validate_score(self, score):
+        if not 1 <= score <= 10:
+            raise serializers.ValidationError(
+                'The score must be from 1 to 10'
+            )
+        return score
+
     class Meta:
         model = Review
         fields = '__all__'
