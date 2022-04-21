@@ -1,11 +1,9 @@
+import datetime as dt
+
 from django.shortcuts import get_object_or_404
-
 from rest_framework import serializers
-
-from reviews.models import (
-    ADMIN, ME, Category, Comment, Genre, Review, Title, User
-)
-
+from reviews.models import (ADMIN, ME, Category, Comment, Genre, Review, Title,
+                            User)
 
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
 CONFIRMATION_CODE_INVALID = {'confirmation_code': 'This is an invalid value.'}

@@ -1,8 +1,8 @@
 import uuid
 
-from django.db.models import Avg
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status, viewsets
@@ -10,19 +10,19 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken
+from reviews.models import Category, Genre, Review, Title
 
 from api_yamdb.settings import EMAIL_AUTH
-from reviews.models import Category, Genre, Review, Title
+
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
-from .permissions import (IsAdminOrReadOnly,
-                          IsUserOrAdminOrModerOrReadOnly)
+from .permissions import IsAdminOrReadOnly, IsUserOrAdminOrModerOrReadOnly
 from .serializers import (CategorySerializer, CommentSerializer,
-                          GenreSerializer, ReviewSerializer,
-                          TitleSerializer, TitleWriteSerializer,
-                          UserAuthSerializer, UserMeSerializer,
-                          UserSerializer, UserSignUpSerializer)
+                          GenreSerializer, ReviewSerializer, TitleSerializer,
+                          TitleWriteSerializer, UserAuthSerializer,
+                          UserMeSerializer, UserSerializer,
+                          UserSignUpSerializer)
 
 SUBJECT = 'YaMDB: Confirmation code for your account'
 
@@ -46,6 +46,7 @@ def signup_user(request):
         fail_silently=False,
     )
     return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny,])
