@@ -10,6 +10,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from api_yamdb.settings import EMAIL_AUTH
 from reviews.models import Category, Genre, Review, Title
@@ -46,24 +47,19 @@ def signup_user(request):
     )
     return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
-
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([permissions.AllowAny,])
 def get_auth_token(request):
-    serializer = UserAuthSerializer(data=request.data, many=False)
-    if serializer.is_valid():
-        return Response(
-            {'token': serializer.data['token']}, status=status.HTTP_200_OK
-        )
-    elif serializer.errors.get('username') is not None:
-        for error in serializer.errors.get('username'):
-            if error.code == 'invalid':
-                return Response(
-                    status=status.HTTP_404_NOT_FOUND
-                )
-    return Response(
-        serializer.errors, status=status.HTTP_400_BAD_REQUEST
-    )
+    serializer = UserAuthSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data['username']
+    confirmation_code = serializer.validated_data['confirmation_code']
+    user = get_object_or_404(User, username=username)
+    if confirmation_code != user.confirmation_code:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    refresh = RefreshToken.for_user(user)
+    return Response({'token': str(refresh.access_token)},
+                    status=status.HTTP_200_OK)
 
 
 class UserViewSet(viewsets.ModelViewSet):

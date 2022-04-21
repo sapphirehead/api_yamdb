@@ -1,11 +1,11 @@
-import datetime as dt
+from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
-from rest_framework_simplejwt.tokens import RefreshToken
-from reviews.models import (ADMIN, ME, Category, Comment, Genre, Review, Title,
-                            User)
 
-from .validators import username_exists
+from reviews.models import (
+    ADMIN, ME, Category, Comment, Genre, Review, Title, User
+)
+
 
 CONFIRMATION_CODE_REQUIRED = {'confirmation_code': 'This field is required.'}
 CONFIRMATION_CODE_INVALID = {'confirmation_code': 'This is an invalid value.'}
@@ -44,22 +44,18 @@ class UserSignUpSerializer(UserSerializer):
         return value
 
 
-class UserAuthSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(validators=[username_exists])
-    token = serializers.SerializerMethodField(read_only=True)
+class UserAuthSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=150)
+    confirmation_code = serializers.CharField(max_length=255)
 
     class Meta:
         model = User
         fields = ['username', 'confirmation_code', 'token']
 
-    def get_token(self, data):
-        token = RefreshToken.for_user(
-            User.objects.get(username=data['username'])
-        )
-        return str(token.access_token)
-
     def validate(self, data):
-        code = User.objects.get(username=data['username']).confirmation_code
+        code = get_object_or_404(
+            User, username=data['username']
+        ).confirmation_code
         code_from_user = data.get('confirmation_code')
         if code_from_user is None:
             raise serializers.ValidationError(CONFIRMATION_CODE_REQUIRED)
