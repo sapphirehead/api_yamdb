@@ -42,8 +42,7 @@ class User(AbstractUser):
         blank=True
     )
     exclude = ('confirmation_code',)
-    
-   
+
     def save(self, *args, **kwargs):
         if self.is_superuser:
             self.role = ADMIN
