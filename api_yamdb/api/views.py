@@ -48,7 +48,7 @@ def signup_user(request):
 
 
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny,])
+@permission_classes([permissions.AllowAny])
 def get_auth_token(request):
     serializer = UserAuthSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
