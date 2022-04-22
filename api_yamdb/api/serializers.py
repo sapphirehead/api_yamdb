@@ -1,8 +1,6 @@
-import datetime as dt
-
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import serializers
-
 from reviews.models import (ADMIN, ME, Category, Comment, Genre, Review, Title,
                             User)
 
@@ -97,7 +95,7 @@ class TitleWriteSerializer(serializers.ModelSerializer):
     )
 
     def validate_year(self, value):
-        year = dt.date.today().year
+        year = timezone.now().year
         if not (value <= year):
             raise serializers.ValidationError('Incorrectly year.')
         return value

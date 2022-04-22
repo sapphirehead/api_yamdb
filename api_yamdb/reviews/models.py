@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+from .validators import year_validator
+
 ADMIN = 'admin'
 MODERATOR = 'moderator'
 USER = 'user'
@@ -82,10 +84,11 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.TextField(max_length=256, unique=True)
-    year = models.IntegerField(
-        'Год',
+    year = models.PositiveSmallIntegerField(
         blank=True,
         null=True,
+        validators=[year_validator],
+        verbose_name='Год'
     )
     description = models.TextField(
         'Описание',
